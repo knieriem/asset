@@ -11,10 +11,14 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 
 	"bitbucket.org/kardianos/osext"
 	"code.google.com/p/go.tools/godoc/vfs"
 	"code.google.com/p/go.tools/godoc/vfs/zipfs"
+
+	"code.google.com/p/go.tools/godoc/vfs/httpfs"
+	"net/http"
 )
 
 const (
@@ -22,7 +26,7 @@ const (
 )
 
 // A file system containing the asset files
-var FileSystem vfs.FileSystem
+var FS vfs.FileSystem
 
 func init() {
 	exe, err := osext.Executable()
@@ -32,15 +36,16 @@ func init() {
 
 	ns := vfs.NameSpace{}
 
-	fi, err := os.Stat(assetDirName)
+	assetDir := filepath.Join(filepath.Dir(exe), assetDirName)
+	fi, err := os.Stat(assetDir)
 	if err == nil {
 		if fi.IsDir() {
-			ns.Bind("/", vfs.OS(assetDirName), "/", vfs.BindReplace)
+			ns.Bind("/", vfs.OS(assetDir), "/", vfs.BindReplace)
 			log.Println("asset: found local directory")
 		}
 	}
 
-	FileSystem = &ns
+	FS = &ns
 
 	zr, err := zip.OpenReader(exe)
 	if err != nil {
@@ -53,14 +58,25 @@ func init() {
 
 // FileString reads an asset file an returns its contents as a string.
 func FileString(name string) (content string, err error) {
-	f, err := FileSystem.Open(name)
+	f, err := FS.Open(name)
 	if err != nil {
 		return
 	}
+	defer f.Close()
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
 		return
 	}
 	content = string(b)
 	return
+}
+
+func Open(name string) (vfs.ReadSeekCloser, error) {
+	return FS.Open(name)
+}
+
+func HttpFS(root string) http.FileSystem {
+	ns := vfs.NameSpace{}
+	ns.Bind("/", FS, root, vfs.BindReplace)
+	return httpfs.New(&ns)
 }
