@@ -36,7 +36,9 @@ func init() {
 
 	ns := vfs.NameSpace{}
 
-	assetDir := filepath.Join(filepath.Dir(exe), assetDirName)
+	exeDir := filepath.Dir(exe)
+
+	assetDir := filepath.Join(exeDir, assetDirName)
 	fi, err := os.Stat(assetDir)
 	if err == nil {
 		if fi.IsDir() {
@@ -44,6 +46,7 @@ func init() {
 			log.Println("asset: found local directory")
 		}
 	}
+	ns.Bind("/", vfs.OS(exeDir), "/", vfs.BindBefore)
 
 	FS = &ns
 
