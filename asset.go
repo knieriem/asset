@@ -52,7 +52,6 @@ func init() {
 
 	zr, err := zip.OpenReader(exe)
 	if err != nil {
-		log.Println("asset: could not open embedded zip file")
 		return
 	}
 
