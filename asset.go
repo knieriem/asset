@@ -82,3 +82,11 @@ func HttpFS(root string) http.FileSystem {
 	ns.Bind("/", FS, root, vfs.BindReplace)
 	return httpfs.New(&ns)
 }
+
+func Stat(path string) (fi os.FileInfo, err error) {
+	return FS.Stat(path)
+}
+
+func ReadDir(path string) (fi []os.FileInfo, err error) {
+	return FS.ReadDir(path)
+}
