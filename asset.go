@@ -28,13 +28,13 @@ const (
 // A file system containing the asset files
 var FS vfs.FileSystem
 
+var ns = vfs.NameSpace{}
+
 func init() {
 	exe, err := osext.Executable()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	ns := vfs.NameSpace{}
 
 	exeDir := filepath.Dir(exe)
 
@@ -56,6 +56,10 @@ func init() {
 	}
 
 	ns.Bind("/", zipfs.New(zr, "-"), "/assets", vfs.BindAfter)
+}
+
+func BindBefore(dir string) {
+	ns.Bind("/", vfs.OS(dir), "/", vfs.BindBefore)
 }
 
 // FileString reads an asset file an returns its contents as a string.
