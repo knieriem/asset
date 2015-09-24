@@ -14,10 +14,10 @@ import (
 	"path/filepath"
 
 	"bitbucket.org/kardianos/osext"
-	"code.google.com/p/go.tools/godoc/vfs"
-	"code.google.com/p/go.tools/godoc/vfs/zipfs"
+	"golang.org/x/tools/godoc/vfs"
+	"golang.org/x/tools/godoc/vfs/zipfs"
 
-	"code.google.com/p/go.tools/godoc/vfs/httpfs"
+	"golang.org/x/tools/godoc/vfs/httpfs"
 	"net/http"
 )
 
