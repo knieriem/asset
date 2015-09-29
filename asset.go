@@ -19,6 +19,8 @@ import (
 
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"net/http"
+
+	"te/vfsutil"
 )
 
 const (
@@ -42,11 +44,11 @@ func init() {
 	fi, err := os.Stat(assetDir)
 	if err == nil {
 		if fi.IsDir() {
-			ns.Bind("/", vfs.OS(assetDir), "/", vfs.BindReplace)
+			ns.Bind("/", vfsutil.LabeledOS(assetDir, "asset dir"), "/", vfs.BindReplace)
 			log.Println("asset: found local directory")
 		}
 	}
-	ns.Bind("/", vfs.OS(exeDir), "/", vfs.BindBefore)
+	ns.Bind("/", vfsutil.LabeledOS(exeDir, ".exe dir"), "/", vfs.BindBefore)
 
 	FS = &ns
 
@@ -55,7 +57,7 @@ func init() {
 		return
 	}
 
-	ns.Bind("/", zipfs.New(zr, "-"), "/assets", vfs.BindAfter)
+	ns.Bind("/", vfsutil.LabeledFS(zipfs.New(zr, "-"), "builtin"), "/assets", vfs.BindAfter)
 }
 
 func BindBefore(dir string) {
