@@ -6,6 +6,9 @@ import (
 )
 
 func ParseTemplateFiles(t *template.Template, filenames ...string) (tnew *template.Template, err error) {
+	if t == nil {
+		t = new(template.Template)
+	}
 	for _, name := range filenames {
 		tpl, err1 := FileString(name)
 		if err1 != nil {
