@@ -65,6 +65,10 @@ func BindExeDir() {
 	ns.Bind("/", vfsutil.LabeledOS(exeDir, ".exe dir"), "/", vfs.BindBefore)
 }
 
+func BindExeSubDir(name string) {
+	ns.Bind("/", vfsutil.LabeledOS(filepath.Join(exeDir, name), ".exe dir"), "/", vfs.BindBefore)
+}
+
 func BindBefore(dir string) {
 	ns.Bind("/", vfs.OS(dir), "/", vfs.BindBefore)
 }
