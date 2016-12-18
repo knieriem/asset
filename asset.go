@@ -32,13 +32,15 @@ var FS vfs.FileSystem
 
 var ns = vfs.NameSpace{}
 
+var exeDir string
+
 func init() {
 	exe, err := osext.Executable()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	exeDir := filepath.Dir(exe)
+	exeDir = filepath.Dir(exe)
 
 	assetDir := filepath.Join(exeDir, assetDirName)
 	fi, err := os.Stat(assetDir)
@@ -48,7 +50,6 @@ func init() {
 			log.Println("asset: found local directory")
 		}
 	}
-	ns.Bind("/", vfsutil.LabeledOS(exeDir, ".exe dir"), "/", vfs.BindBefore)
 
 	FS = &ns
 
@@ -58,6 +59,10 @@ func init() {
 	}
 
 	ns.Bind("/", vfsutil.LabeledFS(zipfs.New(zr, "-"), "builtin"), "/assets", vfs.BindAfter)
+}
+
+func BindExeDir() {
+	ns.Bind("/", vfsutil.LabeledOS(exeDir, ".exe dir"), "/", vfs.BindBefore)
 }
 
 func BindBefore(dir string) {
