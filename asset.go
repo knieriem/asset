@@ -13,14 +13,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"bitbucket.org/kardianos/osext"
+	"github.com/kardianos/osext"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
 
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"net/http"
 
-	"te/vfsutil"
+	"github.com/knieriem/vfsutil"
 )
 
 const (
