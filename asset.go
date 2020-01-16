@@ -13,13 +13,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kardianos/osext"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
 
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"net/http"
 
+	"github.com/knieriem/osext"
 	"github.com/knieriem/vfsutil"
 )
 
