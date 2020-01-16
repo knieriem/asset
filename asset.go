@@ -3,7 +3,7 @@
 // self-extracting zip archive.
 //
 // If the current directory contains a sub directory `assets', files present
-// there will override tcorresponding files in the zip archive.
+// there will override corresponding files in the zip archive.
 package asset
 
 import (
