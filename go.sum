@@ -1,6 +1,4 @@
+github.com/knieriem/fsutil v0.2.0 h1:kecp4FF7zTouKJPc00hcNDtDLZqyCkJwHMYTOJ6oVqw=
+github.com/knieriem/fsutil v0.2.0/go.mod h1:k2QeKuqJimxMI7qcXl4WHJIbFQYtQ9oRItNAzQmAd2g=
 github.com/knieriem/osext v0.1.1 h1:sWv/lNoZuoe0Glx1mXCZ5M/1cc17sspfYmdqRENEFsc=
 github.com/knieriem/osext v0.1.1/go.mod h1:2iVWWrH63OnFUZPVPbYyBmFOUdzHyrYKi8fYrWdIkS0=
-github.com/knieriem/vfsutil v0.1.0 h1:Q0hspgAucMtB2yas+WgNLv7sRJlMGo5OD2704ienrik=
-github.com/knieriem/vfsutil v0.1.0/go.mod h1:vDmi2mPOtfrWx5UDrPmaErqvaMyTdBnfvPqqIxjP9ik=
-golang.org/x/tools v0.0.0-20180822150542-447b503c8ba6 h1:sR1MMGzivj40d1aEP7cLLCtV1WKTJWdCQLV1gYcrjeI=
-golang.org/x/tools v0.0.0-20180822150542-447b503c8ba6/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=

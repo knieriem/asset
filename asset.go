@@ -8,19 +8,16 @@ package asset
 
 import (
 	"archive/zip"
+	"fmt"
+	"io"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 
-	"golang.org/x/tools/godoc/vfs"
-	"golang.org/x/tools/godoc/vfs/zipfs"
-
-	"golang.org/x/tools/godoc/vfs/httpfs"
-	"net/http"
-
+	"github.com/knieriem/fsutil"
 	"github.com/knieriem/osext"
-	"github.com/knieriem/vfsutil"
 )
 
 const (
@@ -28,9 +25,9 @@ const (
 )
 
 // A file system containing the asset files
-var FS vfs.FileSystem
+var FS fs.FS
 
-var ns = vfs.NameSpace{}
+var ns = fsutil.NameSpace{}
 
 var exeDir string
 
@@ -42,40 +39,65 @@ func init() {
 
 	exeDir = filepath.Dir(exe)
 
+	FS = &ns
+
 	assetDir := filepath.Join(exeDir, assetDirName)
 	fi, err := os.Stat(assetDir)
 	if err == nil {
 		if fi.IsDir() {
-			ns.Bind("/", vfsutil.LabeledOS(assetDir, "asset dir"), "/", vfs.BindReplace)
 			log.Println("asset: found local directory")
+			ns.Bind(".", os.DirFS(assetDir), withLabel("asset dir"))
+			return
 		}
 	}
-
-	FS = &ns
 
 	zr, err := zip.OpenReader(exe)
 	if err != nil {
 		return
 	}
+	ns.Bind(".", zr, withLabel("builtin"))
+}
 
-	ns.Bind("/", vfsutil.LabeledFS(zipfs.New(zr, "-"), "builtin"), "/assets", vfs.BindAfter)
+// SetDefaultFS sets a file system to be used by global functions
+// in case during init() a local asset directory could not be found and
+// the executable does not have a zip file appended to it.
+//
+// This function allows maintaining the the package's previous behaviour
+// while extending it to work with io/fs based file systems.
+func SetDefaultFS(fsys fs.FS, root, source string) error {
+	if len(ns.UnionFS) != 0 {
+		return nil
+	}
+	sub, err := fs.Sub(fsys, root)
+	if err != nil {
+		return err
+	}
+	return ns.Bind(".", sub, withLabel(source))
 }
 
 func BindExeDir() {
-	ns.Bind("/", vfsutil.LabeledOS(exeDir, ".exe dir"), "/", vfs.BindBefore)
+	ns.Bind(".", os.DirFS(exeDir), withLabel(".exe dir"), fsutil.BindBefore())
 }
 
 func BindExeSubDir(name string) {
-	ns.Bind("/", vfsutil.LabeledOS(filepath.Join(exeDir, name), ".exe dir"), "/", vfs.BindBefore)
+	ns.Bind(".", os.DirFS(filepath.Join(exeDir, name)), withLabel(".exe dir"), fsutil.BindBefore())
 }
 
 func BindBefore(dir string) {
-	ns.Bind("/", vfs.OS(dir), "/", vfs.BindBefore)
+	ns.Bind(".", os.DirFS(dir), fsutil.BindBefore())
+}
+
+type key uint8
+
+const label key = 0
+
+func withLabel(val string) fsutil.BindOption {
+	return fsutil.WithValue(label, val)
 }
 
 // FileString reads an asset file and returns its contents as a string.
 func FileString(name string) (content string, err error) {
-	f, err := FS.Open(name)
+	f, err := ns.Open(name)
 	if err != nil {
 		return
 	}
@@ -88,20 +110,33 @@ func FileString(name string) (content string, err error) {
 	return
 }
 
-func Open(name string) (vfs.ReadSeekCloser, error) {
-	return FS.Open(name)
+func Open(name string) (io.ReadSeekCloser, error) {
+	f, err := ns.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	seeker, ok := f.(io.Seeker)
+	if ok {
+		return &seekableFile{ReadCloser: f, Seeker: seeker}, nil
+	}
+	return nil, fmt.Errorf("file does not implement io.Seeker: %q", name)
 }
 
-func HttpFS(root string) http.FileSystem {
-	ns := vfs.NameSpace{}
-	ns.Bind("/", FS, root, vfs.BindReplace)
-	return httpfs.New(&ns)
+type seekableFile struct {
+	io.ReadCloser
+	io.Seeker
 }
+
+//func HttpFS(root string) http.FileSystem {
+//	ns := vfs.NameSpace{}
+//	ns.Bind("/", FS, root, vfs.BindReplace)
+//	return httpfs.New(&ns)
+//}
 
 func Stat(path string) (fi os.FileInfo, err error) {
-	return FS.Stat(path)
+	return fs.Stat(ns, path)
 }
 
-func ReadDir(path string) (fi []os.FileInfo, err error) {
-	return FS.ReadDir(path)
+func ReadDir(path string) (fi []fs.DirEntry, err error) {
+	return fs.ReadDir(ns, path)
 }
