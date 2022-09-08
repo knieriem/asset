@@ -73,7 +73,7 @@ func BindBefore(dir string) {
 	ns.Bind("/", vfs.OS(dir), "/", vfs.BindBefore)
 }
 
-// FileString reads an asset file an returns its contents as a string.
+// FileString reads an asset file and returns its contents as a string.
 func FileString(name string) (content string, err error) {
 	f, err := FS.Open(name)
 	if err != nil {
