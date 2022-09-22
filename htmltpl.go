@@ -1,7 +1,6 @@
 package asset
 
 import (
-	"fmt"
 	"html/template"
 )
 
@@ -9,6 +8,5 @@ func ParseHTMLTemplateFiles(t *template.Template, filenames ...string) (*templat
 	if t == nil {
 		t = new(template.Template)
 	}
-	fmt.Println(ns)
 	return t.ParseFS(ns, filenames...)
 }
