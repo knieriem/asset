@@ -87,12 +87,8 @@ func BindBefore(dir string) {
 	ns.Bind(".", os.DirFS(dir), fsutil.BindBefore())
 }
 
-type key uint8
-
-const label key = 0
-
 func withLabel(val string) fsutil.BindOption {
-	return fsutil.WithValue(label, val)
+	return fsutil.WithValue(fsutil.LabelKey, val)
 }
 
 // FileString reads an asset file and returns its contents as a string.

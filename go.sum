@@ -1,4 +1,4 @@
-github.com/knieriem/fsutil v0.2.0 h1:kecp4FF7zTouKJPc00hcNDtDLZqyCkJwHMYTOJ6oVqw=
-github.com/knieriem/fsutil v0.2.0/go.mod h1:k2QeKuqJimxMI7qcXl4WHJIbFQYtQ9oRItNAzQmAd2g=
+github.com/knieriem/fsutil v0.3.0-alpha1 h1:YYPOimCg4CS8TsZS4e0caKWDchNt6yHe6gsioxePgcg=
+github.com/knieriem/fsutil v0.3.0-alpha1/go.mod h1:k2QeKuqJimxMI7qcXl4WHJIbFQYtQ9oRItNAzQmAd2g=
 github.com/knieriem/osext v0.1.1 h1:sWv/lNoZuoe0Glx1mXCZ5M/1cc17sspfYmdqRENEFsc=
 github.com/knieriem/osext v0.1.1/go.mod h1:2iVWWrH63OnFUZPVPbYyBmFOUdzHyrYKi8fYrWdIkS0=
